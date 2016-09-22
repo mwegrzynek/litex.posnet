@@ -3,7 +3,7 @@ from functools import partial
 from binascii import hexlify
 from construct import Struct, Byte, Bytes, Const, String, CString, \
     Switch, Pointer, Anchor, Sequence, GreedyRange, Computed, this, \
-    RawCopy, Checksum
+    RawCopy, Checksum, Probe
 
 from PyCRC.CRCCCITT import CRCCCITT
 
@@ -21,6 +21,11 @@ PosnetToken = Struct(
     'value' / String(length=4)
 )
 
+PosnetErrorCode = Struct(
+    Const('?'),
+    'code' / TabTerminated
+)
+
 PosnetFrame = Struct(
      Const(b'\x02'),
      'summed' / RawCopy(
@@ -28,7 +33,8 @@ PosnetFrame = Struct(
              'instruction' / TabTerminated,
              'parameters' /
                 Switch(this.instruction, dict(
-                     rtcset=Sequence(PosnetParameter)
+                     rtcset=Sequence(PosnetParameter),
+                     ERR=PosnetErrorCode
                 ),
                 default=GreedyRange(PosnetParameter)
               ),
@@ -36,5 +42,7 @@ PosnetFrame = Struct(
       ),
       Const('#'),
       'crc' / Checksum(Bytes(4), crc16, 'summed'),
-      Const('\x03')
+      Const('\x03'),
+      'instruction' / Computed(this.summed.value.instruction),
+      'parameters' / Computed(this.summed.value.parameters)
 )

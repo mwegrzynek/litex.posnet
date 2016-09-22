@@ -36,3 +36,8 @@ def test_rtcget():
 
     frame = PosnetFrame.build(get_clock_instr)
     eq_(frame, '\x02rtcset\tda2016-09-22,12:05\t#8534\x03')
+
+def test_parse_err():
+    from ..protocol import PosnetFrame
+    res = PosnetFrame.parse('\x02ERR\t?5\t#7F84\x03')
+    eq_(res.parameters.code, '5')

@@ -3,7 +3,7 @@ from functools import partial
 from binascii import hexlify
 from construct import Struct, Byte, Bytes, Const, String, CString, \
     Switch, Pointer, Anchor, Sequence, GreedyRange, Computed, this, \
-    RawCopy, Checksum, Probe
+    RawCopy, Checksum, Probe, Container
 
 from PyCRC.CRCCCITT import CRCCCITT
 
@@ -17,13 +17,13 @@ PosnetParameter = Struct(
 )
 
 PosnetToken = Struct(
-    Const('@'),
+    'name' / Const('@'),
     'value' / String(length=4)
 )
 
 PosnetErrorCode = Struct(
-    Const('?'),
-    'code' / TabTerminated
+    'name' / Const('?'),
+    'value' / TabTerminated
 )
 
 PosnetFrame = Struct(
@@ -34,7 +34,7 @@ PosnetFrame = Struct(
              'parameters' /
                 Switch(this.instruction, dict(
                      rtcset=Sequence(PosnetParameter),
-                     ERR=PosnetErrorCode
+                     ERR=Sequence(PosnetErrorCode)
                 ),
                 default=GreedyRange(PosnetParameter)
               ),
@@ -46,3 +46,22 @@ PosnetFrame = Struct(
       'instruction' / Computed(this.summed.value.instruction),
       'parameters' / Computed(this.summed.value.parameters)
 )
+
+def build_frame(instruction, *params):
+    data = Container(
+        summed=Container(
+            value=Container(
+                instruction=instruction,
+                parameters=[Container(name=name, value=value) for name, value in params]
+            )
+        )
+    )
+
+    return PosnetFrame.build(data)
+
+def parse_frame(frame):
+    result = PosnetFrame.parse(frame)
+    return Container(
+        instruction=result.instruction,
+        parameters=[(param.name, param.value) for param in result.parameters]
+    )

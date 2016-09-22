@@ -40,4 +40,15 @@ def test_rtcget():
 def test_parse_err():
     from ..protocol import PosnetFrame
     res = PosnetFrame.parse('\x02ERR\t?5\t#7F84\x03')
-    eq_(res.parameters.code, '5')
+    eq_(res.parameters[0].value, '5')
+
+def test_build_frame():
+    from ..protocol import build_frame
+    frame = build_frame('rtcset', ('da', '2016-09-22,12:05'))
+    eq_(frame, '\x02rtcset\tda2016-09-22,12:05\t#8534\x03')
+
+def test_parse_frame():
+    from ..protocol import parse_frame
+    data = parse_frame('\x02rtcset\tda2016-09-22,12:05\t#8534\x03')
+    eq_(data.instruction, 'rtcset')
+    eq_(data.parameters, [('da', '2016-09-22,12:05')])

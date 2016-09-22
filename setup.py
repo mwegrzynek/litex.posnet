@@ -34,11 +34,13 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     keywords='posnet serial fiscal',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    package_dir={'': 'src'},
+    packages=find_packages('src'),
     namespace_packages=['litex'],
-    install_requires=['pyserial', 'construct>=2,<3'],
+    install_requires=['pyserial', 'construct>=2.8,<3', 'pycrc'],
+    dependency_links=['https://github.com/construct/construct/archive/master.zip#egg=construct-2.8.1'],
     extras_require={
-        'test': ['coverage'],
+        'test': ['coverage', 'nose'],
     },
     package_data={
         #'sample': ['package_data.dat'],

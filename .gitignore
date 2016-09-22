@@ -4,3 +4,8 @@
 *.pyc
 *.mo
 .DS_Store
+.Python
+bin
+include
+lib
+*.egg-info

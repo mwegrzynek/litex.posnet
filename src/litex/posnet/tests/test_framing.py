@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from nose.tools import eq_
+from nose.plugins.attrib import attr
 
 def test_crc():
     from ..protocol import crc16

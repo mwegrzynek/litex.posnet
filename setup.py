@@ -13,9 +13,9 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 version = '1.0.0'
 
 setup(
-    name='litex.posnet_protocol',
+    name='litex.posnet',
     version=version,
-    description='A simle implementation of PosNET protocol for Polish fiscal printers',
+    description='A simple driver for Polish fiscal printers implementing POSNET protocol',
     long_description=long_description,
     url='https://litexservice.pl',
     author=u'Michał Węgrzynek',

@@ -32,3 +32,27 @@ def test_set_time():
     diff = now_on_printer - now
 
     ok_(diff.seconds > 1000)
+
+@attr('real')
+def test_get_vat_rates():
+    from ..protocol import PosnetProtocol
+    pr = PosnetProtocol(conn)
+
+    rates = pr.get_vat_rates()
+    eq_(rates[0], ('A', 23.0))
+
+
+@attr('real')
+def test_show_on_display():
+    from ..protocol import PosnetProtocol
+    pr = PosnetProtocol(conn)
+
+    pr.show_on_display(0, 0, u'Zażółć gęśla jaźń')
+
+
+@attr('real')
+def test_prepare_qr_code():
+    from ..protocol import PosnetProtocol
+    pr = PosnetProtocol(conn)
+
+    pr.prepare_qr_code('http://www.litexservice.pl')

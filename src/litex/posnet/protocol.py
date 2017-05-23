@@ -108,7 +108,7 @@ class PosnetProtocol(object):
 
         if resp.instruction != instruction:
             '''
-            Incorrect reply. Mayba it's an error?
+            Incorrect reply. Maybe it's an error?
             '''
             if resp.instruction == 'ERR':
                 token, err_no, instruction_id, field_name = \
